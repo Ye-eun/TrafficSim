@@ -1,4 +1,4 @@
-# Install script for directory: /Users/MinGiKYUNG/CLionProjects/TrafficSim
+# Install script for directory: /Users/MinGiKYUNG/workspaces/TrafficSim
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -40,5 +40,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/Users/MinGiKYUNG/CLionProjects/TrafficSim/cmake-build-debug/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/Users/MinGiKYUNG/workspaces/TrafficSim/cmake-build-debug/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

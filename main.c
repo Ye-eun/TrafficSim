@@ -4,100 +4,27 @@
 #include <ctype.h>
 #include <sys/time.h>
 #include <malloc/malloc.h>
+#include <math.h>
 #include "TrafficSim.h"
 #include "csvparser.h"
 #include "ll.h"
+#include "SimulationParameters.h"
 
-lane_cell mydata[] = {
-        {1, 1, 1, 1, 60, 1, 1, 1, 1, 1, 50, 10, 1, 1, 1, 1, 1, 1, 0,
-         {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}},
-        {2, 1, 1, 1, 60, 1, 1, 1, 1, 2, 50, 10, 1, 1, 1, 1, 1, 1, 0,
-         {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}},
-        {3, 1, 1, 1, 60, 1, 1, 1, 1, 3, 50, 10, 1, 1, 1, 1, 1, 1, 0,
-         {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}},
-        {4, 1, 1, 1, 60, 1, 1, 1, 1, 4, 50, 10, 1, 1, 1, 1, 1, 1, 0,
-         {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}},
-        {5, 1, 1, 1, 60, 1, 1, 2, 1, 1, 50, 10, 1, 1, 1, 1, 1, 1, 0,
-         {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}},
-        {6, 1, 1, 1, 60, 1, 1, 2, 1, 2, 50, 10, 1, 1, 1, 1, 1, 1, 0,
-         {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}},
-        {7, 1, 1, 1, 60, 1, 1, 2, 1, 3, 50, 10, 1, 1, 1, 1, 1, 1, 0,
-         {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}},
-        {8, 1, 1, 1, 60, 1, 1, 2, 1, 4, 50, 10, 1, 1, 1, 1, 1, 1, 0,
-         {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}},
-        {9, 1, 1, 1, 60, 1, 1, 3, 1, 1, 50, 10, 1, 1, 1, 1, 1, 1, 0,
-         {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}},
-        {10, 1, 1, 1, 60, 1, 1, 3, 1, 2, 50, 10, 1, 1, 1, 1, 1, 1, 0,
-         {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}},
-        {11, 1, 1, 1, 60, 1, 1, 3, 1, 3, 50, 10, 1, 1, 1, 1, 1, 1, 0,
-         {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}},
-        {12, 1, 1, 1, 60, 1, 1, 3, 1, 4, 50, 10, 1, 1, 1, 1, 1, 1, 0,
-         {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}},
-        {13, 1, 1, 1, 60, 1, 1, 4, 1, 1, 50, 10, 1, 1, 1, 1, 1, 1, 0,
-         {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}},
-        {14, 1, 1, 1, 60, 1, 1, 4, 1, 2, 50, 10, 1, 1, 1, 1, 1, 1, 0,
-         {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}},
-        {15, 1, 1, 1, 60, 1, 1, 4, 1, 3, 50, 10, 1, 1, 1, 1, 1, 1, 0,
-         {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}},
-        {16, 1, 1, 1, 60, 1, 1, 4, 1, 4, 50, 10, 1, 1, 1, 1, 1, 1, 0,
-         {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}},
+/*
+works to do
+1. longitudinal movement function
+ --> based on CTM function
+ --> function
+    --> input : (N, maxN, vf, maxY, w{wave speed}, dt)
+    --> output : y {array}
 
-        {17, 2, 1, 1, 60, 1, 1, 1, 1, 1, 50, 10, 1, 1, 1, 1, 1, 1, 0,
-         {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}},
-        {18, 2, 1, 1, 60, 1, 1, 1, 1, 2, 50, 10, 1, 1, 1, 1, 1, 1, 0,
-         {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}},
-        {19, 2, 1, 1, 60, 1, 1, 1, 1, 3, 50, 10, 1, 1, 1, 1, 1, 1, 0,
-         {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}},
-        {20, 2, 1, 1, 60, 1, 1, 1, 1, 4, 50, 10, 1, 1, 1, 1, 1, 1, 0,
-         {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}},
-        {21, 2, 1, 1, 60, 1, 1, 2, 1, 1, 50, 10, 1, 1, 1, 1, 1, 1, 0,
-         {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}},
-        {22, 2, 1, 1, 60, 1, 1, 2, 1, 2, 50, 10, 1, 1, 1, 1, 1, 1, 0,
-         {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}},
-        {23, 2, 1, 1, 60, 1, 1, 2, 1, 3, 50, 10, 1, 1, 1, 1, 1, 1, 0,
-         {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}},
-        {24, 2, 1, 1, 60, 1, 1, 2, 1, 4, 50, 10, 1, 1, 1, 1, 1, 1, 0,
-         {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}},
-        {25, 2, 1, 1, 60, 1, 1, 3, 1, 1, 50, 10, 1, 1, 1, 1, 1, 1, 0,
-         {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}},
-        {26, 2, 1, 1, 60, 1, 1, 3, 1, 2, 50, 10, 1, 1, 1, 1, 1, 1, 0,
-         {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}},
-        {27, 2, 1, 1, 60, 1, 1, 3, 1, 3, 50, 10, 1, 1, 1, 1, 1, 1, 0,
-         {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}},
-        {28, 2, 1, 1, 60, 1, 1, 3, 1, 4, 50, 10, 1, 1, 1, 1, 1, 1, 0,
-         {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}},
-        {29, 2, 1, 1, 60, 1, 1, 4, 1, 1, 50, 10, 1, 1, 1, 1, 1, 1, 0,
-         {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}},
-        {30, 2, 1, 1, 60, 1, 1, 4, 1, 2, 50, 10, 1, 1, 1, 1, 1, 1, 0,
-         {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}},
-        {31, 2, 1, 1, 60, 1, 1, 4, 1, 3, 50, 10, 1, 1, 1, 1, 1, 1, 0,
-         {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}},
-        {32, 2, 1, 1, 60, 1, 1, 4, 1, 4, 50, 10, 1, 1, 1, 1, 1, 1, 0,
-         {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}},
+2. lateral movement function
+ --> LC probability : logit function (~ speed diff. / vf)
 
-};
+3. vehicle transmission function
+*/
 
-        turning_info myturn[] = {
-        {1, 4, 1, 2, 1, 1, 30, 0, 0, 30, 0},
-        {1, 4, 2, 2, 1, 2, 30, 0, 0, 30, 0},
-        {1, 4, 3, 2, 1, 3, 30, 0, 0, 30, 0},
-        {1, 4, 4, 2, 1, 4, 30, 0, 0, 30, 0},
-};
-
-vehicle myveh[] = {
-        {1, 1, 1, 0},
-        {1, 1, 1, 5},
-        {1, 1, 1, 10},
-        {1, 1, 1, 15},
-        {1, 1, 1, 20},
-        {1, 1, 1, 25},
-        {1, 1, 1, 30},
-        {1, 1, 1, 35},
-        {1, 1, 1, 40},
-        {1, 1, 1, 45},
-};
-
-int whole_simtime;
+int loop_limit;
 int current_simtime;
 
 int external_y = 10;
@@ -106,101 +33,155 @@ int valY_inlink[400];
 
 int main() {
     // read data
-    whole_simtime = 100;
-
-    for(int i=0; i < 400; i++)
-        valY_inlink[i]=1;
+    loop_limit = 100;
 
     // run simulation_step
-    SimulationStep(&mydata, &myturn, &myveh, whole_simtime);
+    SimulationStep(loop_limit, &mylink, &mynode, &myveh);
 
     printf("Elapsed Time: %f\n", endTime - startTime);
     return 0;
 }
 
-void SimulationStep(lane_cell lc[], turning_info turn[], vehicle veh[], int simtime) {
-    for (int cur_time = 0; cur_time <= simtime; cur_time += 5) {
+void SimulationStep(int loop_limit, link l[], node n[], vehicle v[]) {
+    // int tid = threadIdx.x;
+    // int i = blockIdx.x * blockDim.x + tid;
 
-        // load traffic signal
-        for (int ts_cur = 0; ts_cur < sizeof(turn) / sizeof(turning_info); ts_cur++) {
-            external_y = 10; // link 1 -> 2 가능한 차량 댓수
-        }
+    for (int current = 0; current < loop_limit; current++) {
 
+        for (int cur_link = 0; cur_link < link_length; cur_link++) {
+            // read vehicle from connectCell (i'th vehicle in global memory )
+            //NextCoonectionCell에서 signal 정보 읽어오기 => link
 
-        for (int i = 0; i < sizeof(mydata) / sizeof(lane_cell); i++) {
+            //Previous ConnectionCell에서 Input 읽어오기 => link
 
-            // load vehicle & check source_node
-            // insert car in link1,section1,lane4
-            /*
-            for (int veh_cur; veh_cur < sizeof(veh) / sizeof(veh[0]); veh_cur++) {
+            // 각 링크l[i]별로 Mandatory LC 처리
+            Evaluate_MLC(&l[cur_link]);
 
-                if (veh[veh_cur].insert_time == cur_time && lc[i].linkID == 1&& lc[i].sectionID == 1 && lc[i].cell_id==4) {
-                    lc[i].vehicle_list[0] = veh[veh_cur].veh_id;
-                    lc[i].y_in++;
-                }
-                printf("veh: %d, time:%d", veh[veh_cur].veh_id, veh[veh_cur].insert_time);
-            }
-             */
+            // 각 링크l[i]별로 Optioanl LC 처리
+            Evaluate_OLC(&l[cur_link]);
 
-            // load previous link veh data
-            if (lc[i].sectionID == 1)
-                lc[i].y_in = valY_inlink[4*cur_time/5+lc[i].cell_id % 4];
-                //lc[i].y_in=1;
-            else
-                lc[i].y_in=1;
-            printf("%d", lc[i].y_in);
+            //각 링크l[i]별로 CTM SIM 처리
+            CFsim(&l[cur_link]);
 
-#if DEBUG
-            for (int i=0; i<4; i++)
-                printf("%d ", valY_inlink[i]);
-#endif
+            // 링크별 결과 전송
 
-            // lane: calc n
-            lc[i].numberOfVehicle = lc[i].numberOfVehicle + lc[i].y_in;
+            //전체 차량들에대해 셀이동 처리
+            Vehicle_Move(&l[cur_link]);
 
-            // lane: calc speed
-            lc[i].speed = 50;
-
-            // lane: calc lane_change
-            // go random
-
-
-            // next lane and connection_info
-            if (lc[i].sectionID % 4 != 0) {
-                lc[i + 1].y_in = 1;
-                lc[i].numberOfVehicle--;
-            }
-            else    {
-                //lc[i].y_in=0;
-                valY_inlink[4*cur_time/5+lc[i].cell_id % 4]=1;
-                lc[i].numberOfVehicle--;
-
-                //if (lc[i].linkID == 2) {
-                //    lc[i].numberOfVehicle--;
-                //}
-            }
-
-
-
-            // check sink_node
-
-
-            // export n, speed, veh
-            //if (lc[i].sectionID == 4) {
-            printf("[%d] %d,%d,%d:\t n: %d, speed: %d, y_in:%d\n", cur_time, lc[i].linkID, lc[i].sectionID,
-                   lc[i].cell_id,
-                   lc[i].numberOfVehicle, lc[i].speed, lc[i].y_in);
-
-            //}
-
-#if DEBUG
-            for (int i=0; i<sizeof(valY_inlink)/16; i++)
-                printf("%d ", valY_inlink[i]);
-            printf("\n");
-#endif
+            // write vehicle in connectCell
         }
     }
 }
+
+
+void CFsim(link *l) {
+//    double w = 15;  //wave speed
+//
+//    double L = l->CellLength;
+//
+//    int NoCell = NOCELL;
+//    int NoLane = NOLANE;
+//
+//    double Lmin = l.Vf / 3.6 * dt;
+//
+//
+//    for (int cell = 0; cell < NOCELL; cell++) {
+//        for (int lane = 0; lane < NOLANE; lane++) {
+//            l->Y[cell][lane] = MIN(MIN(Lmin / L[cell] * l.N[cell][lane], l.maxY[cell][lane]), MIN(l.maxY[cell][lane + 1], w * dt / L * (l.maxN[cell][lane] - l.N[cell][lane]));
+//            // moveforward flag update
+//
+//        }
+//    }
+
+}
+
+
+void Evaluate_MLC(link *l) {
+
+    // --------------------------------------------------------------------------------------------------
+    // Mandatory Lane Change 대상 차량 선정 및 차량 데이터베이스에 차로변경 플래그(veh.lanechange) 설정
+    // --------------------------------------------------------------------------------------------------
+//    for (int cell = 0; cell < NOCELL; cell++) {
+//        for (int lane = 0; lane < NOLANE; lane++) {
+//            for (int i = 0; i < 20; i++) {
+//                vehicle veh = l->veh[cell][lane][i]; // 차량데이터 가지고 오기
+//
+//                int TargetLaneLeft = veh.targetLane1[veh.currentLinkOrder];  // 타겟 레인 하한 가지고 오기
+//                int TargetLaneRight = veh.targetLane2[veh.currentLinkOrder];  // 타겟 레인 상한 가지고 오기
+//
+//                if (veh.currentLane < TargetLaneLeft) {
+//                    veh.lanechange = 1;
+//                    // l.LC_Left[veh.currentCell][veh.currentLane]=1
+//                }     // 오른쪽으로 차로 변경이 필요
+//                else if (veh.currentLane > TargetLaneRight) {
+//                    veh.lanechange = -1;
+//                    // l[veh.currentLink].LC_Righft[veh.currentCell][veh.currentLane]=1;}  // 왼쪽으로 차로 변경이 필요
+//                    else (veh.lanechange = 0;)
+//                }
+//            }
+//        }
+//        // --------------------------------------------------------------------------------------------------
+//    }
+    return;
+}
+
+void Evaluate_OLC(link *l) {
+
+    // --------------------------------------------------------------------------------------------------
+    // Optional Lane Change 대상 차량 선정 및 차량 데이터베이스에 차로변경 플래그(veh.lanechange) 설정
+    // --------------------------------------------------------------------------------------------------
+
+    for (int cell = 0; cell < NOCELL; cell++) {
+        for (int lane = 1; lane < NOLANE; lane++) {
+            // l.LC_Left[cell][lane] += round((l.V[cell][lane - 1] - l.V[cell][lane]) / l.Vf);
+        }
+    }
+    return;
+
+}
+
+void Vehicle_Move(link *l) {
+//
+//    for (int vehID = 0; vehID < sizeof(v); vehID++) {
+//        vehcle veh = v[vehID]; // 차량데이터 베이스에서  가지고 오기
+//        // --------------------------------------------------------------------------------------------------
+//        // 차로변경이 있는 경우 차량의 현재 Cell과 링크를 업데이트 한다.
+//        //--------------------------------------------------------------------------------------------------
+//        if (veh.Lanechange = +1) {}    // Move vehicle to left lane
+//        if (veh.Lanechange = -1) {}    // Move vehicle to Right lane
+//        if (veh.moveforward = 1) {}     // Move vehicle to frent cell
+//
+//        // --------------------------------------------------------------------------------------------------
+//
+//
+//        // --------------------------------------------------------------------------------------------------
+//        // 차량이 다음셀로 전진하는 경우 차량의 현재 Cell과 링크를 업데이트 한다.
+//        //--------------------------------------------------------------------------------------------------
+//        if (veh.moveForward == 1) {
+//
+//            //글로벌 메모리의 Vehicle 정보를 업데이트
+//
+//            if ((veh.currentCell == l[veh.currentLink].NOLANE)) {
+//                //connection Cell로 바꾸기
+//
+//                // 현재 셀이 링크의 마지막셀인 경우
+//                veh.currentLinkOrder++; // Path의 현재 링크 순서를 1 증가
+//                veh.currentLink = veh.path[currentLinkOrder];
+//                veh.currentCell = 0;  // Cell position을 링크 시작점으로 \
+//
+//
+//            } else {
+//                // N Update
+//
+//
+//                veh.currentCell++;   //마지막 셀이 아니면, 다음 셀로 차량을 옮긴다.
+//            }
+//        }
+//    }
+//    // --------------------------------------------------------------------------------------------------
+    return;
+}
+
 
 int readRoadData() {
     int i = 0;
@@ -272,4 +253,10 @@ int readRoadData() {
     CsvParser_destroy(csvparser);
 
     return 0;
+}
+
+double get_time_ms() {
+    struct timeval t;
+    gettimeofday(&t, NULL);
+    return (t.tv_sec + (t.tv_usec / 1000000.0)) * 1000.0;
 }

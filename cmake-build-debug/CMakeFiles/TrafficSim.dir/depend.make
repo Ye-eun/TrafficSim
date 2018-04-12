@@ -4,6 +4,7 @@
 CMakeFiles/TrafficSim.dir/csvparser.c.o: ../csvparser.c
 CMakeFiles/TrafficSim.dir/csvparser.c.o: ../csvparser.h
 
+CMakeFiles/TrafficSim.dir/main.c.o: ../SimulationParameters.h
 CMakeFiles/TrafficSim.dir/main.c.o: ../TrafficSim.h
 CMakeFiles/TrafficSim.dir/main.c.o: ../csvparser.h
 CMakeFiles/TrafficSim.dir/main.c.o: ../ll.h

@@ -4,8 +4,8 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_C
-  "/Users/MinGiKYUNG/CLionProjects/TrafficSim/csvparser.c" "/Users/MinGiKYUNG/CLionProjects/TrafficSim/cmake-build-debug/CMakeFiles/TrafficSim.dir/csvparser.c.o"
-  "/Users/MinGiKYUNG/CLionProjects/TrafficSim/main.c" "/Users/MinGiKYUNG/CLionProjects/TrafficSim/cmake-build-debug/CMakeFiles/TrafficSim.dir/main.c.o"
+  "/Users/MinGiKYUNG/workspaces/TrafficSim/csvparser.c" "/Users/MinGiKYUNG/workspaces/TrafficSim/cmake-build-debug/CMakeFiles/TrafficSim.dir/csvparser.c.o"
+  "/Users/MinGiKYUNG/workspaces/TrafficSim/main.c" "/Users/MinGiKYUNG/workspaces/TrafficSim/cmake-build-debug/CMakeFiles/TrafficSim.dir/main.c.o"
   )
 set(CMAKE_C_COMPILER_ID "AppleClang")
 
