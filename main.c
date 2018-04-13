@@ -24,6 +24,7 @@ works to do
 3. vehicle transmission function
 */
 
+
 int loop_limit;
 int current_simtime;
 
@@ -75,24 +76,26 @@ void SimulationStep(int loop_limit, link l[], node n[], vehicle v[]) {
 
 
 void CFsim(link *l) {
-//    double w = 15;  //wave speed
-//
+    double w = 15;  //wave speed
+
 //    double L = l->CellLength;
 //
 //    int NoCell = NOCELL;
 //    int NoLane = NOLANE;
 //
-//    double Lmin = l.Vf / 3.6 * dt;
+//    double Lmin = l->Vf / 3.6 * dt;
 //
 //
 //    for (int cell = 0; cell < NOCELL; cell++) {
 //        for (int lane = 0; lane < NOLANE; lane++) {
-//            l->Y[cell][lane] = MIN(MIN(Lmin / L[cell] * l.N[cell][lane], l.maxY[cell][lane]), MIN(l.maxY[cell][lane + 1], w * dt / L * (l.maxN[cell][lane] - l.N[cell][lane]));
+//            l->Y[cell][lane] = MIN(
+//                    MIN(Lmin / L[cell] * l->N[cell][lane], l->MaxY[cell][lane]),
+//                    MIN(l->MaxY[cell][lane + 1], w * dt / L * (l->MaxN[cell][lane] - l->N[cell][lane])));
 //            // moveforward flag update
 //
 //        }
 //    }
-
+    return;
 }
 
 
@@ -101,9 +104,9 @@ void Evaluate_MLC(link *l) {
     // --------------------------------------------------------------------------------------------------
     // Mandatory Lane Change 대상 차량 선정 및 차량 데이터베이스에 차로변경 플래그(veh.lanechange) 설정
     // --------------------------------------------------------------------------------------------------
-//    for (int cell = 0; cell < NOCELL; cell++) {
-//        for (int lane = 0; lane < NOLANE; lane++) {
-//            for (int i = 0; i < 20; i++) {
+    for (int cell = 0; cell < NOCELL; cell++) {
+        for (int lane = 0; lane < NOLANE; lane++) {
+            for (int i = 0; i < 20; i++) {
 //                vehicle veh = l->veh[cell][lane][i]; // 차량데이터 가지고 오기
 //
 //                int TargetLaneLeft = veh.targetLane1[veh.currentLinkOrder];  // 타겟 레인 하한 가지고 오기
@@ -118,10 +121,10 @@ void Evaluate_MLC(link *l) {
 //                    // l[veh.currentLink].LC_Righft[veh.currentCell][veh.currentLane]=1;}  // 왼쪽으로 차로 변경이 필요
 //                    else (veh.lanechange = 0;)
 //                }
-//            }
-//        }
-//        // --------------------------------------------------------------------------------------------------
-//    }
+            }
+        }
+        // --------------------------------------------------------------------------------------------------
+    }
     return;
 }
 
@@ -133,7 +136,7 @@ void Evaluate_OLC(link *l) {
 
     for (int cell = 0; cell < NOCELL; cell++) {
         for (int lane = 1; lane < NOLANE; lane++) {
-            // l.LC_Left[cell][lane] += round((l.V[cell][lane - 1] - l.V[cell][lane]) / l.Vf);
+            l->LC_Left[cell][lane] += round((l->V[cell][lane - 1] - l->V[cell][lane]) / l->Vf);
         }
     }
     return;
@@ -141,7 +144,7 @@ void Evaluate_OLC(link *l) {
 }
 
 void Vehicle_Move(link *l) {
-//
+
 //    for (int vehID = 0; vehID < sizeof(v); vehID++) {
 //        vehcle veh = v[vehID]; // 차량데이터 베이스에서  가지고 오기
 //        // --------------------------------------------------------------------------------------------------
@@ -166,7 +169,7 @@ void Vehicle_Move(link *l) {
 //
 //                // 현재 셀이 링크의 마지막셀인 경우
 //                veh.currentLinkOrder++; // Path의 현재 링크 순서를 1 증가
-//                veh.currentLink = veh.path[currentLinkOrder];
+//                veh.currentLink = veh.path[veh.currentLinkOrder];
 //                veh.currentCell = 0;  // Cell position을 링크 시작점으로 \
 //
 //
@@ -178,7 +181,7 @@ void Vehicle_Move(link *l) {
 //            }
 //        }
 //    }
-//    // --------------------------------------------------------------------------------------------------
+    // --------------------------------------------------------------------------------------------------
     return;
 }
 
